@@ -7,6 +7,7 @@
 #define GAMEBOARD_H
 
 // Standard library includes
+#include <array>
 #include <vector>
 #include <utility>
 #include <random>
@@ -21,6 +22,9 @@
 //----------------------------------------------------------------------------------------------------
 // Definitions
 //----------------------------------------------------------------------------------------------------
+template<class T>
+using Grid = std::vector<std::vector<T>>;
+
 typedef struct T_BOARD_SIZE{
 	int rows;
 	int cols;
@@ -29,7 +33,7 @@ typedef struct T_BOARD_SIZE{
 typedef struct T_BOMB_STATS{
 	int totalBombs;
 	int numberRemaining;
-	std::vector<std::vector<bool>> map;
+	Grid<bool> map;
 } BOMB_STATS;
 
 //----------------------------------------------------------------------------------------------------

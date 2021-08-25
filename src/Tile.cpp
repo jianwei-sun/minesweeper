@@ -9,11 +9,11 @@
 // Function: Tile (constructor)
 // Desc: constructs the Tile object
 //----------------------------------------------------------------------------------------------------
-Tile::Tile(Coordinates coordinates, bool bomb, QWidget* parent)
+Tile::Tile(Coordinates coordinates, bool bomb, int neighborBombs, QWidget* parent)
     : QPushButton(parent),
       coordinates_(coordinates),
       bomb_(bomb),
-      neighborBombs_(0),
+      neighborBombs_(neighborBombs),
       revealed_(false),
       visualState_(TileVisualState::unclicked)
 {
@@ -21,6 +21,10 @@ Tile::Tile(Coordinates coordinates, bool bomb, QWidget* parent)
     this->setFixedSize(Tile::pixelSize_, Tile::pixelSize_);
 }
 
+//----------------------------------------------------------------------------------------------------
+// Function: mousePressEvent
+// Desc: reimplement the mousePress event to respond to primary and secondary clicks
+//----------------------------------------------------------------------------------------------------
 void Tile::mousePressEvent(QMouseEvent* mouseEvent){
     if(mouseEvent->button() == Qt::LeftButton){
         this->primaryClicked();

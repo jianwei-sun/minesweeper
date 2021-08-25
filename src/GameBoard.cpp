@@ -15,7 +15,7 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
       bombStats_(BOMB_STATS{
           (int)(mineDensity * boardSize.rows * boardSize.cols),
           (int)(mineDensity * boardSize.rows * boardSize.cols),
-          std::vector<std::vector<bool>>(boardSize.rows, std::vector<bool>(boardSize.cols, false))
+          Grid<bool>(boardSize.rows, std::vector<bool>(boardSize.cols, false))
       })
 {
     // Generate a vector of all coordinates
@@ -35,11 +35,32 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
         this->bombStats_.map[bombCoordinates[i].first][bombCoordinates[i].second] = true;
     }
 
+    // Count the number of neighboring bombs for each tile
+    const std::array<std::pair<int, int>, 8> neighbors{
+        std::make_pair(-1,-1), std::make_pair(-1,0), std::make_pair(-1,1),
+        std::make_pair(0,-1),  /*       x        */  std::make_pair(0,1),
+        std::make_pair(1,-1),  std::make_pair(1,0),  std::make_pair(1,1)
+    };
+    Grid<int> bombCounter_(boardSize.rows, std::vector<int>(boardSize.cols, 0));
+    for(int i = 0; i < boardSize.rows; i++){
+        for(int j = 0; j < boardSize.cols; j++){
+            bombCounter_[i][j] = 0;
+            for(const std::pair<int, int>& coordinates : neighbors){
+                int x1 = i + coordinates.first;
+                int x2 = j + coordinates.second;
+                // If the neighbor coordinate is not out of bounds and it has a bomb, increment the count
+                if(!(x1 < 0 || x1 >= boardSize.rows || x2 < 0 || x2 >= boardSize.cols) && this->bombStats_.map[x1][x2]){
+                    bombCounter_[i][j]++;
+                }
+            }
+        }
+    }
+
     // Create a grid of tiles
     QGridLayout* gridLayout = new QGridLayout(this);
     for(int i = 0; i < boardSize.rows; i++){
         for(int j = 0; j < boardSize.cols; j++){
-            gridLayout->addWidget(new Tile(std::make_pair(i,j), this->bombStats_.map[i][j], this), i, j);
+            gridLayout->addWidget(new Tile(std::make_pair(i,j), this->bombStats_.map[i][j], bombCounter_[i][j], this), i, j);
         }
     }
     gridLayout->setContentsMargins(0,0,0,0);
