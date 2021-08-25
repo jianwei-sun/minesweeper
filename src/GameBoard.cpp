@@ -39,7 +39,7 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
     QGridLayout* gridLayout = new QGridLayout(this);
     for(int i = 0; i < boardSize.rows; i++){
         for(int j = 0; j < boardSize.cols; j++){
-            gridLayout->addWidget(new Tile(this->bombStats_.map[i][j], this), i, j);
+            gridLayout->addWidget(new Tile(std::make_pair(i,j), this->bombStats_.map[i][j], this), i, j);
         }
     }
     gridLayout->setContentsMargins(0,0,0,0);
