@@ -33,27 +33,42 @@ void Tile::mousePressEvent(QMouseEvent* mouseEvent){
     }
 }
 
+void Tile::emptyReveal(void){
+    // The goal is to reveal the largest island of tiles without neighbors, including a boundary of tiles with at least 1 neighbor
+    // This logic can be realized by simulating a primary click if the tile does not have a bomb, because it ensures that the tile would either
+    // continue to propagate to nearby tiles without neighbors, or display the number of neighbors with bombs (which would end the propagation at the desired boundary)
+    if(!this->bomb_){
+        this->primaryClicked();
+    }
+}
+
 void Tile::primaryClicked(void){
     // Clicking only makes sense if the tile has not yet been revealed
     if(!this->revealed_){
+        // Disable the tile from being revealed again
+        this->revealed_ = true;
+
         // End the game if the user clicks on a bomb tile
         if(this->bomb_){
             this->setIcon(QIcon(":/images/mine.png"));
             this->setStyleSheet("background-color:red;");
             emit this->gameOver(this->coordinates_);
+
         // Otherwise reveal a number and/or propagate neighbors
         } else{
             // Display the number
             if(this->neighborBombs_ > 0){
-
+                this->setText(QString::number(this->neighborBombs_));
+                this->setStyleSheet(QString("font:bold;color:") + Tile::fontColors_[this->neighborBombs_ - 1] + QString(";"));
+        
             // Propagate to neighbors
             } else{
-
+                emit this->revealEmpty();
             }
-        }
 
-        // Disable the primary and secondary click connect signals
-        this->revealed_ = true;
+            // Show the button as having been pressed
+            this->setFlat(true);
+        }
     }
 }
 
@@ -88,3 +103,13 @@ void Tile::secondaryClicked(void){
 
 const int Tile::pixelSize_ = 22;
 const int Tile::pixelIconSize_ = 18;
+const std::array<QString, 8> Tile::fontColors_ = {
+    QString("blue"),
+    QString("green"),
+    QString("red"),
+    QString("purple"),
+    QString("maroon"),
+    QString("teal"),
+    QString("black"),
+    QString("gray")
+};

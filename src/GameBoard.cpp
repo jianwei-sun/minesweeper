@@ -66,6 +66,23 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
     gridLayout->setContentsMargins(0,0,0,0);
     gridLayout->setSpacing(0);
 
+    // Connect the tiles to each other for revealing empty tiles
+    for(int i = 0; i < boardSize.rows; i++){
+        for(int j = 0; j < boardSize.cols; j++){
+            for(const std::pair<int, int>& coordinates : neighbors){
+                int x1 = i + coordinates.first;
+                int x2 = j + coordinates.second;
+                if(!(x1 < 0 || x1 >= boardSize.rows || x2 < 0 || x2 >= boardSize.cols)){
+                    this->connect(
+                        static_cast<Tile*>(gridLayout->itemAtPosition(i,j)->widget()), 
+                        &Tile::revealEmpty, 
+                        static_cast<Tile*>(gridLayout->itemAtPosition(x1,x2)->widget()), 
+                        &Tile::emptyReveal);
+                }
+            }
+        }
+    }
+
     // Fix the size
     this->setFixedSize(this->minimumSize());
 }   

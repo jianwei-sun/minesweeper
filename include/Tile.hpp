@@ -8,10 +8,13 @@
 
 // Standard library includes
 #include <utility>
+#include <array>
+#include <vector>
 
 // Third party library includes
 #include <QPushButton>
 #include <QMouseEvent>
+#include <QString>
 
 // Project-specific includes
 
@@ -24,17 +27,6 @@ enum class TileVisualState{
 	unsure,
 	number,
 	mine,
-	exploded
-};
-
-enum class TileUnrevealedStates{
-	unclicked,
-	flag,
-	unsure
-};
-
-enum class TileRevealedStates{
-	empty,
 	exploded
 };
 
@@ -51,7 +43,11 @@ public:
 protected:
 	void mousePressEvent(QMouseEvent*) override;
 
+public slots:
+	void emptyReveal(void);
+
 signals:
+	void revealEmpty(void);
 	void gameOver(Coordinates);
 
 private:
@@ -69,6 +65,7 @@ private:
 
 	static const int pixelSize_;
 	static const int pixelIconSize_;
+	static const std::array<QString, 8> fontColors_;
 };
 
 #endif
