@@ -1,44 +1,40 @@
 //----------------------------------------------------------------------------------------------------
-// File: GameMainWindow.hpp
+// File: ControlPanel.hpp
 // Date: 09/03/2021
-// Desc: Header file for the GameMainWindow class
+// Desc: Header file for the ControlPanel class
 //----------------------------------------------------------------------------------------------------
-#ifndef GAMEMAINWINDOW_H
-#define GAMEMAINWINDOW_H
+#ifndef CONTROLPANEL_H
+#define CONTROLPANEL_H
 
 // Standard library includes
 
 // Third party library includes
-#include <QApplication>
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMenu>
-#include <QAction>
 #include <QWidget>
-#include <QVBoxLayout>
+#include <QLCDNumber>
+#include <QIcon>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 // Project-specific includes
-#include "ControlPanel.hpp"
-#include "GameBoard.hpp"
 
 //----------------------------------------------------------------------------------------------------
 // Class definition
 //----------------------------------------------------------------------------------------------------
-class GameMainWindow : public QMainWindow{
+class ControlPanel : public QWidget{
 	Q_OBJECT
 public:
-	GameMainWindow(QWidget* parent = nullptr);
+	ControlPanel(QWidget* parent = nullptr);
 
 public slots:
 	void reset(void);
 
-private:
-	ControlPanel* controlPanel_;
-	GameBoard* gameBoard_;
+signals:
+	void newGame(void);
 
-	static const int numberRows_;
-	static const int numberColumns_;
-	static const double mineDensity_;
+private:
+
+	static const int smileyButtonSize_;
+	static const int smileyIconSize_;
 };
 
 #endif

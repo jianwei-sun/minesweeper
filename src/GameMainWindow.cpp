@@ -11,6 +11,7 @@
 //----------------------------------------------------------------------------------------------------
 GameMainWindow::GameMainWindow(QWidget* parent)
     : QMainWindow(parent),
+      controlPanel_(new ControlPanel(this)),
       gameBoard_(new GameBoard(BOARD_SIZE{GameMainWindow::numberRows_, GameMainWindow::numberColumns_}, GameMainWindow::mineDensity_, this))
 {
     // Set window properties
@@ -34,58 +35,39 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     settingsMenu->addAction(quitAction);
 
     // Connect the settings action signals
-    this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::newGame);
+    this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::reset);
     this->connect(quitAction, &QAction::triggered, qApp, QApplication::quit);
 
     // Create a central widget for adding the children widgets
     QWidget* centralWidget = new QWidget(this);
     this->setCentralWidget(centralWidget);
 
-    // Add a counter for the total number of mines
-    QLCDNumber* minesRemaining = new QLCDNumber(3, centralWidget);
-    minesRemaining->setFixedSize(minesRemaining->sizeHint());
-
-    // Add the smiley face button for starting a new game
-    QPushButton* faceButton = new QPushButton(centralWidget);
-    faceButton->setFixedSize(GameMainWindow::smileyButtonSize_, GameMainWindow::smileyButtonSize_);
-    faceButton->setIcon(QIcon(":/images/smile.png"));
-    faceButton->setIconSize(QSize(GameMainWindow::smileyIconSize_, GameMainWindow::smileyIconSize_));
-
-    // Connect the smiley push button to the new game slot
-    this->connect(faceButton, &QPushButton::clicked, this, &GameMainWindow::newGame);
-
-    // Add a counter for the number of elapsed seconds
-    QLCDNumber* elapsedTime = new QLCDNumber(3, centralWidget);
-    elapsedTime->setFixedSize(elapsedTime->sizeHint());
-
-    // Create the top row widget consisting of the counters and smiley face button
-    QWidget* topRow = new QWidget(centralWidget);
-    QHBoxLayout* topLayout = new QHBoxLayout(topRow);
-    topLayout->setContentsMargins(0,0,0,0);
-    topLayout->addWidget(minesRemaining);
-    topLayout->addStretch();
-    topLayout->addWidget(faceButton);
-    topLayout->addStretch();
-    topLayout->addWidget(elapsedTime);
-
     // Add the game board underneath
     QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
-    mainLayout->addWidget(topRow);
+    mainLayout->addWidget(this->controlPanel_);
     mainLayout->addWidget(this->gameBoard_);
+
+    // Connect the signals and slots of the children widgets
+    this->connect(this->controlPanel_, &ControlPanel::newGame, this, &GameMainWindow::reset);
 
     // Fix the size
     this->setFixedSize(this->sizeHint());    
+
+    // Start a new game
+    this->reset();
 }
 
-void GameMainWindow::newGame(void){
-    this->gameBoard_->newGame(GameMainWindow::mineDensity_);
+//----------------------------------------------------------------------------------------------------
+// Public slots
+//----------------------------------------------------------------------------------------------------
+void GameMainWindow::reset(void){
+    this->controlPanel_->reset();
+    this->gameBoard_->reset(GameMainWindow::mineDensity_);
 }
 
 //----------------------------------------------------------------------------------------------------
 // Static constants
 //----------------------------------------------------------------------------------------------------
-const int GameMainWindow::smileyButtonSize_ = 34;
-const int GameMainWindow::smileyIconSize_ = 30;
 const int GameMainWindow::numberRows_ = 10;
 const int GameMainWindow::numberColumns_ = 20;
 const double GameMainWindow::mineDensity_ = 0.2;

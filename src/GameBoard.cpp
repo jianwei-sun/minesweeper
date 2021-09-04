@@ -49,15 +49,12 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
 
     // Fix the size
     this->setFixedSize(this->sizeHint());
-
-    // Start a new game
-    this->newGame(mineDensity);
 }   
 
 //----------------------------------------------------------------------------------------------------
 // Public slots
 //----------------------------------------------------------------------------------------------------
-void GameBoard::newGame(double mineDensity){
+void GameBoard::reset(double mineDensity){
     // Generate a vector of all coordinates
     std::vector<std::pair<int,int>> bombCoordinates;
     for(int i = 0; i < this->boardSize_.rows; i++){

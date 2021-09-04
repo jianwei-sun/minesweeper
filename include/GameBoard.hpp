@@ -46,7 +46,7 @@ public:
 	GameBoard(const BOARD_SIZE&, const double, QWidget* parent = nullptr);
 
 public slots:
-	void newGame(double);
+	void reset(double);
 	void gameOver(Coordinates);
 
 private:
