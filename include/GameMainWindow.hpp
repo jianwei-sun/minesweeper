@@ -9,6 +9,11 @@
 // Standard library includes
 
 // Third party library includes
+#include <QApplication>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
 #include <QWidget>
 #include <QLCDNumber>
 #include <QIcon>
@@ -22,10 +27,13 @@
 //----------------------------------------------------------------------------------------------------
 // Class definition
 //----------------------------------------------------------------------------------------------------
-class GameMainWindow : public QWidget{
+class GameMainWindow : public QMainWindow{
 	Q_OBJECT
 public:
 	GameMainWindow(QWidget* parent = nullptr);
+
+public slots:
+	void newGame(void);
 
 private:
 	GameBoard* gameBoard_;
