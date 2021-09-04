@@ -32,6 +32,9 @@ private:
 
 	static const int smileyButtonSize_;
 	static const int smileyIconSize_;
+	static const int numberRows_;
+	static const int numberColumns_;
+	static const double mineDensity_;
 };
 
 #endif

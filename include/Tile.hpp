@@ -37,8 +37,9 @@ typedef std::pair<int, int> Coordinates;
 class Tile : public QPushButton{
 	Q_OBJECT
 public:
-	Tile(Coordinates, bool, int, QWidget* parent = nullptr);
+	Tile(Coordinates, QWidget* parent = nullptr);
 	void reveal(void);
+	void reset(bool, int);
 
 protected:
 	void mousePressEvent(QMouseEvent*) override;
@@ -56,8 +57,8 @@ private:
 
 	const Coordinates coordinates_;
 
-	const bool bomb_;
-	const int neighborBombs_;
+	bool bomb_;
+	int neighborBombs_;
 
 	bool revealed_;
 

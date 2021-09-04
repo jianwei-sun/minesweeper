@@ -11,11 +11,15 @@
 //----------------------------------------------------------------------------------------------------
 GameMainWindow::GameMainWindow(QWidget* parent)
     : QWidget(parent),
-      gameBoard_(new GameBoard(BOARD_SIZE{10, 20}, 0.2, this))
+      gameBoard_(new GameBoard(BOARD_SIZE{GameMainWindow::numberRows_, GameMainWindow::numberColumns_}, GameMainWindow::mineDensity_, this))
 {
-    // Add a counter for the total number of bombs
-    QLCDNumber* bombsRemaining = new QLCDNumber(3, this);
-    bombsRemaining->setFixedSize(bombsRemaining->sizeHint());
+    // Set window properties
+    this->setWindowTitle("Minesweeper");
+    this->setWindowIcon(QIcon(":/images/mine.png"));
+    
+    // Add a counter for the total number of mines
+    QLCDNumber* minesRemaining = new QLCDNumber(3, this);
+    minesRemaining->setFixedSize(minesRemaining->sizeHint());
 
     // Add the smiley face button for starting a new game
     QPushButton* faceButton = new QPushButton(this);
@@ -31,7 +35,7 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     QWidget* topRow = new QWidget(this);
     QHBoxLayout* topLayout = new QHBoxLayout(topRow);
     topLayout->setContentsMargins(0,0,0,0);
-    topLayout->addWidget(bombsRemaining);
+    topLayout->addWidget(minesRemaining);
     topLayout->addStretch();
     topLayout->addWidget(faceButton);
     topLayout->addStretch();
@@ -44,6 +48,11 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 
     // Fix the size
     this->setFixedSize(this->sizeHint());
+
+    // Connect the smiley push button to the new game slot
+    this->connect(faceButton, &QPushButton::clicked, [this](){
+        this->gameBoard_->newGame(GameMainWindow::mineDensity_);
+    });
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -51,3 +60,6 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 //----------------------------------------------------------------------------------------------------
 const int GameMainWindow::smileyButtonSize_ = 34;
 const int GameMainWindow::smileyIconSize_ = 30;
+const int GameMainWindow::numberRows_ = 10;
+const int GameMainWindow::numberColumns_ = 20;
+const double GameMainWindow::mineDensity_ = 0.2;

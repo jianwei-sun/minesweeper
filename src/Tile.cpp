@@ -9,16 +9,27 @@
 // Function: Tile (constructor)
 // Desc: constructs the Tile object
 //----------------------------------------------------------------------------------------------------
-Tile::Tile(Coordinates coordinates, bool bomb, int neighborBombs, QWidget* parent)
+Tile::Tile(Coordinates coordinates, QWidget* parent)
     : QPushButton(parent),
       coordinates_(coordinates),
-      bomb_(bomb),
-      neighborBombs_(neighborBombs),
+      bomb_(false),
+      neighborBombs_(0),
       revealed_(false),
       visualState_(TileVisualState::unclicked)
 {
     // Fix the size
     this->setFixedSize(Tile::pixelSize_, Tile::pixelSize_);
+}
+
+void Tile::reset(bool bomb, int neighborBombs){
+    this->bomb_ = bomb;
+    this->neighborBombs_ = neighborBombs;
+    this->revealed_ = false;
+    this->visualState_ = TileVisualState::unclicked;
+    this->setIcon(QIcon());
+    this->setStyleSheet("");
+    this->setText("");
+    this->setFlat(false);
 }
 
 void Tile::reveal(void){

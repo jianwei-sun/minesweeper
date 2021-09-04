@@ -46,7 +46,7 @@ public:
 	GameBoard(const BOARD_SIZE&, const double, QWidget* parent = nullptr);
 
 public slots:
-	// void reset(void);
+	void newGame(double);
 	void gameOver(Coordinates);
 
 private:
@@ -54,6 +54,8 @@ private:
 	BOMB_STATS bombStats_;
 
 	Grid<Tile*> tiles_;
+
+	static const std::array<std::pair<int, int>, 8> neighbors_;
 };
 
 #endif
