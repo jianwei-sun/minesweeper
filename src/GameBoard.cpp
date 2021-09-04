@@ -16,7 +16,8 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
           (int)(mineDensity * boardSize.rows * boardSize.cols),
           (int)(mineDensity * boardSize.rows * boardSize.cols),
           Grid<bool>(boardSize.rows, std::vector<bool>(boardSize.cols, false))
-      })
+      }),
+      tiles_(boardSize.rows, std::vector<Tile*>(boardSize.cols, nullptr))
 {
     // Generate a vector of all coordinates
     std::vector<std::pair<int,int>> bombCoordinates;
@@ -60,29 +61,40 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
     QGridLayout* gridLayout = new QGridLayout(this);
     for(int i = 0; i < boardSize.rows; i++){
         for(int j = 0; j < boardSize.cols; j++){
-            gridLayout->addWidget(new Tile(std::make_pair(i,j), this->bombStats_.map[i][j], bombCounter_[i][j], this), i, j);
+            this->tiles_[i][j] = new Tile(std::make_pair(i,j), this->bombStats_.map[i][j], bombCounter_[i][j], this);
+            gridLayout->addWidget(this->tiles_[i][j], i, j);
         }
     }
     gridLayout->setContentsMargins(0,0,0,0);
     gridLayout->setSpacing(0);
 
-    // Connect the tiles to each other for revealing empty tiles
+    // Make the necessary signal and slot connections for the tiles
     for(int i = 0; i < boardSize.rows; i++){
         for(int j = 0; j < boardSize.cols; j++){
+            // Connect the tiles to each other for revealing empty tiles
             for(const std::pair<int, int>& coordinates : neighbors){
                 int x1 = i + coordinates.first;
                 int x2 = j + coordinates.second;
                 if(!(x1 < 0 || x1 >= boardSize.rows || x2 < 0 || x2 >= boardSize.cols)){
-                    this->connect(
-                        static_cast<Tile*>(gridLayout->itemAtPosition(i,j)->widget()), 
-                        &Tile::revealEmpty, 
-                        static_cast<Tile*>(gridLayout->itemAtPosition(x1,x2)->widget()), 
-                        &Tile::emptyReveal);
+                    this->connect(this->tiles_[i][j], &Tile::revealEmpty, this->tiles_[x1][x2], &Tile::emptyReveal);
                 }
             }
+
+            // Connect the game over signal to the board
+            this->connect(this->tiles_[i][j], &Tile::gameOver, this, &GameBoard::gameOver);
         }
     }
 
     // Fix the size
-    this->setFixedSize(this->minimumSize());
+    this->setFixedSize(this->sizeHint());
 }   
+
+void GameBoard::gameOver(Coordinates coordinates){
+    for(int i = 0; i < this->boardSize_.rows; i++){
+        for(int j = 0; j < this->boardSize_.cols; j++){
+            if(i != coordinates.first || j != coordinates.second){
+                this->tiles_[i][j]->reveal();
+            }
+        }
+    }
+}

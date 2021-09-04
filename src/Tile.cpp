@@ -21,6 +21,26 @@ Tile::Tile(Coordinates coordinates, bool bomb, int neighborBombs, QWidget* paren
     this->setFixedSize(Tile::pixelSize_, Tile::pixelSize_);
 }
 
+void Tile::reveal(void){
+    if(this->bomb_){
+        switch(this->visualState_){
+            case TileVisualState::flag:{
+                this->setIcon(QIcon(":/images/mine_flag.png"));
+                break;
+            }
+            case TileVisualState::unsure:{
+                this->setIcon(QIcon(":/images/mine_question-mark.png"));
+                break;
+            }
+            default:{
+                this->setIcon(QIcon(":/images/mine.png"));
+            }
+        }
+        this->setIconSize(QSize(Tile::pixelIconSize_, Tile::pixelIconSize_));
+    }
+    this->revealed_ = true;
+}
+
 //----------------------------------------------------------------------------------------------------
 // Function: mousePressEvent
 // Desc: reimplement the mousePress event to respond to primary and secondary clicks
@@ -44,7 +64,7 @@ void Tile::emptyReveal(void){
 
 void Tile::primaryClicked(void){
     // Clicking only makes sense if the tile has not yet been revealed
-    if(!this->revealed_){
+    if(!(this->revealed_ || this->visualState_ == TileVisualState::flag || this->visualState_ == TileVisualState::unsure)){
         // Disable the tile from being revealed again
         this->revealed_ = true;
 
@@ -101,6 +121,9 @@ void Tile::secondaryClicked(void){
     }
 }
 
+//----------------------------------------------------------------------------------------------------
+// Static constants
+//----------------------------------------------------------------------------------------------------
 const int Tile::pixelSize_ = 22;
 const int Tile::pixelIconSize_ = 18;
 const std::array<QString, 8> Tile::fontColors_ = {

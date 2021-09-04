@@ -3,5 +3,9 @@
     <file>images/mine.png</file>
     <file>images/flag.png</file>
     <file>images/question-mark.png</file>
+    <file>images/mine_flag.png</file>
+    <file>images/mine_question-mark.png</file>
+    <file>images/smile.png</file>
+    <file>images/sad.png</file>
 </qresource>
 </RCC>

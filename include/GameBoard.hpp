@@ -14,6 +14,7 @@
 #include <chrono>
 
 // Third party library includes
+#include <QWidget>
 #include <QGridLayout>
 
 // Project-specific includes
@@ -46,11 +47,13 @@ public:
 
 public slots:
 	// void reset(void);
-	// void gameOver(void);
+	void gameOver(Coordinates);
 
 private:
 	BOARD_SIZE boardSize_;
 	BOMB_STATS bombStats_;
+
+	Grid<Tile*> tiles_;
 };
 
 #endif

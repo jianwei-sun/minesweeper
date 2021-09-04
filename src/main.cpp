@@ -14,7 +14,7 @@
 #include <QApplication>
 
 // Project-specific includes
-#include "GameBoard.hpp"
+#include "GameMainWindow.hpp"
 
 //----------------------------------------------------------------------------------------------------
 // Constants
@@ -27,10 +27,8 @@
 int main(int argc, char *argv[]){
     // Setup the GUI
     std::unique_ptr<QApplication> app = std::make_unique<QApplication>(argc, argv);
-    // std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>();
-    // mainWindow->show();
-    GameBoard* gameBoard = new GameBoard(BOARD_SIZE{10, 20}, 0.2);
-    gameBoard->show();
+    std::unique_ptr<GameMainWindow> gameMainWindow = std::make_unique<GameMainWindow>();
+    gameMainWindow->show();
 
     // Execute the main GUI event loop, which is a blocking call
     return app->exec();

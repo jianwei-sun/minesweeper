@@ -15,8 +15,7 @@
 #include <QPushButton>
 #include <QMouseEvent>
 #include <QString>
-
-// Project-specific includes
+#include <QIcon>
 
 //----------------------------------------------------------------------------------------------------
 // Definitions
@@ -39,6 +38,7 @@ class Tile : public QPushButton{
 	Q_OBJECT
 public:
 	Tile(Coordinates, bool, int, QWidget* parent = nullptr);
+	void reveal(void);
 
 protected:
 	void mousePressEvent(QMouseEvent*) override;
