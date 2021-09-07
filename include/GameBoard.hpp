@@ -51,6 +51,7 @@ public slots:
 
 signals:
 	void numberFlagsChanged(int);
+	void gameStarted(void);
 
 private:
 	BOARD_SIZE boardSize_;

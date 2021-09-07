@@ -29,6 +29,7 @@ public:
 
 public slots:
 	void reset(int);
+	void startTimer(void);
 	void gameOver(bool);
 	void updateNumberFlags(int);
 
@@ -36,8 +37,8 @@ signals:
 	void newGame(void);
 
 private:
-	QLCDNumber* minesRemaining_;
-	QLCDNumber* elapsedTime_;
+	QLCDNumber* minesRemainingDisplay_;
+	QLCDNumber* elapsedTimeDisplay_;
 	QTimer* timer_;
 	int secondsElapsed_;
 	int numberBombs_;

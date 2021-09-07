@@ -51,6 +51,7 @@ signals:
 	void revealEmpty(void);
 	void gameOver(Coordinates);
 	void flagDelta(int);
+	void gameStarted(void);
 
 private:
 	void primaryClicked(void);
@@ -62,6 +63,7 @@ private:
 	int neighborBombs_;
 
 	bool revealed_;
+	bool gameStarted_;
 
 	TileVisualState visualState_;
 

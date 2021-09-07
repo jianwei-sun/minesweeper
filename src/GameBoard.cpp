@@ -48,6 +48,11 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, QWidget* parent)
                 emit this->numberFlagsChanged(this->bombStats_.numberFlags);
             });
 
+            // Connect the game started signal from the tiles
+            this->connect(this->tiles_[i][j], &Tile::gameStarted, [this](void){
+                emit this->gameStarted();
+            });
+
             // Connect the game over signal to the board
             this->connect(this->tiles_[i][j], &Tile::gameOver, this, &GameBoard::gameOver);
         }

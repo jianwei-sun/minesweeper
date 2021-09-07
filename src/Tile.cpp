@@ -15,6 +15,7 @@ Tile::Tile(Coordinates coordinates, QWidget* parent)
       bomb_(false),
       neighborBombs_(0),
       revealed_(false),
+      gameStarted_(false),
       visualState_(TileVisualState::unclicked)
 {
     // Fix the size
@@ -25,6 +26,7 @@ void Tile::reset(bool bomb, int neighborBombs){
     this->bomb_ = bomb;
     this->neighborBombs_ = neighborBombs;
     this->revealed_ = false;
+    this->gameStarted_ = false;
     this->visualState_ = TileVisualState::unclicked;
     this->setIcon(QIcon());
     this->setStyleSheet("");
@@ -60,6 +62,10 @@ void Tile::mousePressEvent(QMouseEvent* mouseEvent){
         this->primaryClicked();
     } else if(mouseEvent->button() == Qt::RightButton){
         this->secondaryClicked();
+    }
+    if(!this->gameStarted_){
+        this->gameStarted_ = true;
+        emit this->gameStarted();
     }
 }
 

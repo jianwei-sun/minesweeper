@@ -49,6 +49,7 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 
     // Connect the signals and slots of the children widgets
     this->connect(this->controlPanel_, &ControlPanel::newGame, this, &GameMainWindow::reset);
+    this->connect(this->gameBoard_, &GameBoard::gameStarted, this->controlPanel_, &ControlPanel::startTimer);
     this->connect(this->gameBoard_, &GameBoard::numberFlagsChanged, this->controlPanel_, &ControlPanel::updateNumberFlags);
 
     // Fix the size
