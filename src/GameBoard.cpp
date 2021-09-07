@@ -9,12 +9,12 @@
 // Function: GameBoard (constructor)
 // Desc: constructs the GameBoard object
 //----------------------------------------------------------------------------------------------------
-GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWidget* parent)
+GameBoard::GameBoard(const BOARD_SIZE& boardSize, QWidget* parent)
     : QWidget(parent),
       boardSize_(boardSize),
       bombStats_(BOMB_STATS{
-          (int)(mineDensity * boardSize.rows * boardSize.cols),
-          (int)(mineDensity * boardSize.rows * boardSize.cols),
+          0,
+          0,
           Grid<bool>(boardSize.rows, std::vector<bool>(boardSize.cols, false))
       }),
       tiles_(boardSize.rows, std::vector<Tile*>(boardSize.cols, nullptr))
@@ -42,6 +42,12 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
                 }
             }
 
+            // Connect the flag state changing signal from the tiles
+            this->connect(this->tiles_[i][j], &Tile::flagDelta, [this](int delta){
+                this->bombStats_.numberFlags += delta;
+                emit this->numberFlagsChanged(this->bombStats_.numberFlags);
+            });
+
             // Connect the game over signal to the board
             this->connect(this->tiles_[i][j], &Tile::gameOver, this, &GameBoard::gameOver);
         }
@@ -54,7 +60,7 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, const double mineDensity, QWid
 //----------------------------------------------------------------------------------------------------
 // Public slots
 //----------------------------------------------------------------------------------------------------
-void GameBoard::reset(double mineDensity){
+void GameBoard::reset(int numberBombs){
     // Generate a vector of all coordinates
     std::vector<std::pair<int,int>> bombCoordinates;
     for(int i = 0; i < this->boardSize_.rows; i++){
@@ -68,9 +74,8 @@ void GameBoard::reset(double mineDensity){
     shuffle(bombCoordinates.begin(), bombCoordinates.end(), std::default_random_engine(seed));
 
     // Update the mine information
-    int numberBombs = (int)(mineDensity * this->boardSize_.rows * this->boardSize_.cols);
     this->bombStats_.totalBombs = numberBombs;
-    this->bombStats_.numberRemaining = numberBombs;
+    this->bombStats_.numberFlags = 0;
 
     // Clear the existing bomb map
     for(int i = 0; i < this->boardSize_.rows; i++){

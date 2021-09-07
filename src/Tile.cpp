@@ -111,12 +111,14 @@ void Tile::secondaryClicked(void){
                 this->setIcon(QIcon(":/images/flag.png"));
                 this->setIconSize(QSize(Tile::pixelIconSize_, Tile::pixelIconSize_));
                 this->visualState_ = TileVisualState::flag;
+                emit this->flagDelta(1);
                 break;
             }
             case TileVisualState::flag:{
                 this->setIcon(QIcon(":/images/question-mark.png"));
                 this->setIconSize(QSize(Tile::pixelIconSize_, Tile::pixelIconSize_));
                 this->visualState_ = TileVisualState::unsure;
+                emit this->flagDelta(-1);
                 break;
             }
             case TileVisualState::unsure:{

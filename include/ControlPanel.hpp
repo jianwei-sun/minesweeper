@@ -14,6 +14,8 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QTimer>
+
 
 // Project-specific includes
 
@@ -26,12 +28,19 @@ public:
 	ControlPanel(QWidget* parent = nullptr);
 
 public slots:
-	void reset(void);
+	void reset(int);
+	void gameOver(bool);
+	void updateNumberFlags(int);
 
 signals:
 	void newGame(void);
 
 private:
+	QLCDNumber* minesRemaining_;
+	QLCDNumber* elapsedTime_;
+	QTimer* timer_;
+	int secondsElapsed_;
+	int numberBombs_;
 
 	static const int smileyButtonSize_;
 	static const int smileyIconSize_;

@@ -12,7 +12,7 @@
 GameMainWindow::GameMainWindow(QWidget* parent)
     : QMainWindow(parent),
       controlPanel_(new ControlPanel(this)),
-      gameBoard_(new GameBoard(BOARD_SIZE{GameMainWindow::numberRows_, GameMainWindow::numberColumns_}, GameMainWindow::mineDensity_, this))
+      gameBoard_(new GameBoard(BOARD_SIZE{GameMainWindow::numberRows_, GameMainWindow::numberColumns_}, this))
 {
     // Set window properties
     this->setWindowTitle("Minesweeper");
@@ -22,12 +22,12 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     QAction* newGameAction = new QAction("&New Game", this);
     newGameAction->setShortcut(tr("CTRL+N"));
 
-    QAction* adjustDifficultyAction = new QAction("Adjust difficulty", this);
+    QAction* adjustDifficultyAction = new QAction("Settings", this);
 
     QAction* quitAction = new QAction("&Quit", this);
     quitAction->setShortcut(tr("CTRL+Q"));
 
-    QMenu* settingsMenu = this->menuBar()->addMenu("&Settings");
+    QMenu* settingsMenu = this->menuBar()->addMenu("Game");
     settingsMenu->addAction(newGameAction);
     settingsMenu->addSeparator();
     settingsMenu->addAction(adjustDifficultyAction);
@@ -49,6 +49,7 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 
     // Connect the signals and slots of the children widgets
     this->connect(this->controlPanel_, &ControlPanel::newGame, this, &GameMainWindow::reset);
+    this->connect(this->gameBoard_, &GameBoard::numberFlagsChanged, this->controlPanel_, &ControlPanel::updateNumberFlags);
 
     // Fix the size
     this->setFixedSize(this->sizeHint());    
@@ -61,8 +62,9 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 // Public slots
 //----------------------------------------------------------------------------------------------------
 void GameMainWindow::reset(void){
-    this->controlPanel_->reset();
-    this->gameBoard_->reset(GameMainWindow::mineDensity_);
+    int numberBombs = (int)(GameMainWindow::mineDensity_ * GameMainWindow::numberRows_ * GameMainWindow::numberColumns_);
+    this->controlPanel_->reset(numberBombs);
+    this->gameBoard_->reset(numberBombs);
 }
 
 //----------------------------------------------------------------------------------------------------

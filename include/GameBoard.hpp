@@ -33,7 +33,7 @@ typedef struct T_BOARD_SIZE{
 
 typedef struct T_BOMB_STATS{
 	int totalBombs;
-	int numberRemaining;
+	int numberFlags;
 	Grid<bool> map;
 } BOMB_STATS;
 
@@ -43,11 +43,14 @@ typedef struct T_BOMB_STATS{
 class GameBoard : public QWidget{
 	Q_OBJECT
 public:
-	GameBoard(const BOARD_SIZE&, const double, QWidget* parent = nullptr);
+	GameBoard(const BOARD_SIZE&, QWidget* parent = nullptr);
 
 public slots:
-	void reset(double);
+	void reset(int);
 	void gameOver(Coordinates);
+
+signals:
+	void numberFlagsChanged(int);
 
 private:
 	BOARD_SIZE boardSize_;

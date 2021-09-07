@@ -50,6 +50,7 @@ public slots:
 signals:
 	void revealEmpty(void);
 	void gameOver(Coordinates);
+	void flagDelta(int);
 
 private:
 	void primaryClicked(void);

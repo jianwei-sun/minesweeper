@@ -10,11 +10,13 @@
 // Desc: constructs the ControlPanel object
 //----------------------------------------------------------------------------------------------------
 ControlPanel::ControlPanel(QWidget* parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      secondsElapsed_(0),
+      numberBombs_(0)
 {
     // Add a counter for the total number of mines
-    QLCDNumber* minesRemaining = new QLCDNumber(3, this);
-    minesRemaining->setFixedSize(minesRemaining->sizeHint());
+    this->minesRemaining_ = new QLCDNumber(3, this);
+    this->minesRemaining_->setFixedSize(this->minesRemaining_->sizeHint());
 
     // Add the smiley face button for starting a new game
     QPushButton* faceButton = new QPushButton(this);
@@ -28,24 +30,40 @@ ControlPanel::ControlPanel(QWidget* parent)
     });
 
     // Add a counter for the number of elapsed seconds
-    QLCDNumber* elapsedTime = new QLCDNumber(3, this);
-    elapsedTime->setFixedSize(elapsedTime->sizeHint());
+    this->elapsedTime_ = new QLCDNumber(3, this);
+    this->elapsedTime_->setFixedSize(this->elapsedTime_->sizeHint());
+    this->timer_ = new QTimer(this);
+    this->connect(this->timer_, &QTimer::timeout, [this](void){
+        this->elapsedTime_->display(this->secondsElapsed_++);
+    });
 
     // Create the top row widget consisting of the counters and smiley face button
     QHBoxLayout* topLayout = new QHBoxLayout(this);
     topLayout->setContentsMargins(0,0,0,0);
-    topLayout->addWidget(minesRemaining);
+    topLayout->addWidget(this->minesRemaining_);
     topLayout->addStretch();
     topLayout->addWidget(faceButton);
     topLayout->addStretch();
-    topLayout->addWidget(elapsedTime);
+    topLayout->addWidget(this->elapsedTime_);
 }
 
 //----------------------------------------------------------------------------------------------------
 // Slots
 //----------------------------------------------------------------------------------------------------
-void ControlPanel::reset(void){
+void ControlPanel::reset(int numberBombs){
+    this->secondsElapsed_ = 0;
+    this->numberBombs_ = numberBombs;
+    this->updateNumberFlags(0);
+    this->timer_->start(1000);
+}
 
+void ControlPanel::gameOver(bool victory){
+    this->timer_->stop();
+}
+
+void ControlPanel::updateNumberFlags(int numberFlags){
+    int remainingBombs = this->numberBombs_ - numberFlags;
+    this->minesRemaining_->display(remainingBombs);
 }
 
 //----------------------------------------------------------------------------------------------------
