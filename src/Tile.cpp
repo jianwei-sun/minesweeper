@@ -29,7 +29,6 @@ void Tile::reset(bool bomb, int neighborBombs){
     this->setIcon(QIcon());
     this->setStyleSheet("");
     this->setText("");
-    this->setFlat(false);
 }
 
 void Tile::reveal(void){
@@ -87,18 +86,19 @@ void Tile::primaryClicked(void){
 
         // Otherwise reveal a number and/or propagate neighbors
         } else{
+            // Show the button as having been pressed
+            this->setStyleSheet(QString("border: 0px;"));
+
             // Display the number
             if(this->neighborBombs_ > 0){
                 this->setText(QString::number(this->neighborBombs_));
-                this->setStyleSheet(QString("font:bold;color:") + Tile::fontColors_[this->neighborBombs_ - 1] + QString(";"));
+                QString fontStyle = QString("font:bold;color:") + Tile::fontColors_[this->neighborBombs_ - 1] + QString(";");
+                this->setStyleSheet(this->styleSheet().append(fontStyle));
         
             // Propagate to neighbors
             } else{
                 emit this->revealEmpty();
             }
-
-            // Show the button as having been pressed
-            this->setFlat(true);
         }
     }
 }
