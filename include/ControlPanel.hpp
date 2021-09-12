@@ -37,6 +37,7 @@ signals:
 	void newGame(void);
 
 private:
+	QPushButton* faceButton_;
 	QLCDNumber* minesRemainingDisplay_;
 	QLCDNumber* elapsedTimeDisplay_;
 	QTimer* timer_;

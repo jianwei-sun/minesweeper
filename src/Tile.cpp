@@ -58,14 +58,14 @@ void Tile::reveal(void){
 // Desc: reimplement the mousePress event to respond to primary and secondary clicks
 //----------------------------------------------------------------------------------------------------
 void Tile::mousePressEvent(QMouseEvent* mouseEvent){
+    if(!this->gameStarted_){
+        this->gameStarted_ = true;
+        emit this->gameStarted();
+    }
     if(mouseEvent->button() == Qt::LeftButton){
         this->primaryClicked();
     } else if(mouseEvent->button() == Qt::RightButton){
         this->secondaryClicked();
-    }
-    if(!this->gameStarted_){
-        this->gameStarted_ = true;
-        emit this->gameStarted();
     }
 }
 

@@ -19,13 +19,11 @@ ControlPanel::ControlPanel(QWidget* parent)
     this->minesRemainingDisplay_->setFixedSize(this->minesRemainingDisplay_->sizeHint());
 
     // Add the smiley face button for starting a new game
-    QPushButton* faceButton = new QPushButton(this);
-    faceButton->setFixedSize(ControlPanel::smileyButtonSize_, ControlPanel::smileyButtonSize_);
-    faceButton->setIcon(QIcon(":/images/smile.png"));
-    faceButton->setIconSize(QSize(ControlPanel::smileyIconSize_, ControlPanel::smileyIconSize_));
+    this->faceButton_ = new QPushButton(this);
+    this->faceButton_->setFixedSize(ControlPanel::smileyButtonSize_, ControlPanel::smileyButtonSize_);
 
     // Connect the smiley push button to the new game slot
-    this->connect(faceButton, &QPushButton::clicked, [this](){
+    this->connect(this->faceButton_, &QPushButton::clicked, [this](){
         emit this->newGame();
     });
 
@@ -42,7 +40,7 @@ ControlPanel::ControlPanel(QWidget* parent)
     topLayout->setContentsMargins(0,0,0,0);
     topLayout->addWidget(this->minesRemainingDisplay_);
     topLayout->addStretch();
-    topLayout->addWidget(faceButton);
+    topLayout->addWidget(this->faceButton_);
     topLayout->addStretch();
     topLayout->addWidget(this->elapsedTimeDisplay_);
 }
@@ -55,6 +53,8 @@ void ControlPanel::reset(int numberBombs){
     this->elapsedTimeDisplay_->display(0);
     this->numberBombs_ = numberBombs;
     this->minesRemainingDisplay_->display(numberBombs);
+    this->faceButton_->setIcon(QIcon(":/images/smile.png"));
+    this->faceButton_->setIconSize(QSize(ControlPanel::smileyIconSize_, ControlPanel::smileyIconSize_));
     this->timer_->stop();
 }
 
@@ -64,6 +64,8 @@ void ControlPanel::startTimer(void){
 
 void ControlPanel::gameOver(bool victory){
     this->timer_->stop();
+    this->faceButton_->setIcon(QIcon(":/images/sad.png"));
+    this->faceButton_->setIconSize(QSize(ControlPanel::smileyIconSize_, ControlPanel::smileyIconSize_));
 }
 
 void ControlPanel::updateNumberFlags(int numberFlags){

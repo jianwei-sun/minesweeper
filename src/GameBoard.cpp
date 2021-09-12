@@ -54,7 +54,10 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, QWidget* parent)
             });
 
             // Connect the game over signal to the board
-            this->connect(this->tiles_[i][j], &Tile::gameOver, this, &GameBoard::gameOver);
+            this->connect(this->tiles_[i][j], &Tile::gameOver, [=](Coordinates coordinates){
+                this->revealAllExcept(coordinates);
+                emit this->gameOver(false);
+            });
         }
     }
 
@@ -95,7 +98,6 @@ void GameBoard::reset(int numberBombs){
     }
 
     // Count the number of neighboring bombs for each tile
-    
     Grid<int> bombCounter(this->boardSize_.rows, std::vector<int>(this->boardSize_.cols, 0));
     for(int i = 0; i < this->boardSize_.rows; i++){
         for(int j = 0; j < this->boardSize_.cols; j++){
@@ -119,7 +121,7 @@ void GameBoard::reset(int numberBombs){
     }
 }
 
-void GameBoard::gameOver(Coordinates coordinates){
+void GameBoard::revealAllExcept(Coordinates coordinates){
     for(int i = 0; i < this->boardSize_.rows; i++){
         for(int j = 0; j < this->boardSize_.cols; j++){
             if(i != coordinates.first || j != coordinates.second){

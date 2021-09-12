@@ -47,9 +47,10 @@ public:
 
 public slots:
 	void reset(int);
-	void gameOver(Coordinates);
+	void revealAllExcept(Coordinates);
 
 signals:
+	void gameOver(bool);
 	void numberFlagsChanged(int);
 	void gameStarted(void);
 
