@@ -15,6 +15,7 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, QWidget* parent)
       bombStats_(BOMB_STATS{
           0,
           0,
+          0,
           Grid<bool>(boardSize.rows, std::vector<bool>(boardSize.cols, false))
       }),
       tiles_(boardSize.rows, std::vector<Tile*>(boardSize.cols, nullptr))
@@ -41,6 +42,16 @@ GameBoard::GameBoard(const BOARD_SIZE& boardSize, QWidget* parent)
                     this->connect(this->tiles_[i][j], &Tile::revealEmpty, this->tiles_[x1][x2], &Tile::emptyReveal);
                 }
             }
+
+            // Connect the tile delta signal from the tiles to check the win condition. The condition is if the player reveals the number
+            // of tiles equal to the total number less the number of bombs. 
+            this->connect(this->tiles_[i][j], &Tile::tileDelta, [this](){
+                this->bombStats_.numberRevealedTiles++;
+                if(this->bombStats_.numberRevealedTiles == (this->boardSize_.rows * this->boardSize_.cols - this->bombStats_.totalBombs)){
+                    this->revealAll();
+                    emit this->gameOver(true);
+                }
+            });
 
             // Connect the flag state changing signal from the tiles
             this->connect(this->tiles_[i][j], &Tile::flagDelta, [this](int delta){
@@ -83,6 +94,7 @@ void GameBoard::reset(int numberBombs){
 
     // Update the mine information
     this->bombStats_.totalBombs = numberBombs;
+    this->bombStats_.numberRevealedTiles = 0;
     this->bombStats_.numberFlags = 0;
 
     // Clear the existing bomb map
@@ -117,6 +129,14 @@ void GameBoard::reset(int numberBombs){
     for(int i = 0; i < this->boardSize_.rows; i++){
         for(int j = 0; j < this->boardSize_.cols; j++){
             this->tiles_[i][j]->reset(this->bombStats_.map[i][j], bombCounter[i][j]);
+        }
+    }
+}
+
+void GameBoard::revealAll(void){
+    for(int i = 0; i < this->boardSize_.rows; i++){
+        for(int j = 0; j < this->boardSize_.cols; j++){
+            this->tiles_[i][j]->reveal();
         }
     }
 }

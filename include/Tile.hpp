@@ -51,6 +51,7 @@ signals:
 	void revealEmpty(void);
 	void gameOver(Coordinates);
 	void flagDelta(int);
+	void tileDelta(void);
 	void gameStarted(void);
 
 private:

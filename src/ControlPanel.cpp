@@ -64,7 +64,12 @@ void ControlPanel::startTimer(void){
 
 void ControlPanel::gameOver(bool victory){
     this->timer_->stop();
-    this->faceButton_->setIcon(QIcon(":/images/sad.png"));
+    if(victory){
+        this->faceButton_->setIcon(QIcon(":/images/cool.png"));
+        this->minesRemainingDisplay_->display(0);
+    } else{
+        this->faceButton_->setIcon(QIcon(":/images/sad.png"));
+    }
     this->faceButton_->setIconSize(QSize(ControlPanel::smileyIconSize_, ControlPanel::smileyIconSize_));
 }
 

@@ -95,6 +95,9 @@ void Tile::primaryClicked(void){
             // Show the button as having been pressed
             this->setStyleSheet(QString("border: 0px;"));
 
+            // Indicate that the tile is pressed
+            emit this->tileDelta();
+
             // Display the number
             if(this->neighborBombs_ > 0){
                 this->setText(QString::number(this->neighborBombs_));

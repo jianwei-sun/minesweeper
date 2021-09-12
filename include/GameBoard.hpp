@@ -33,6 +33,7 @@ typedef struct T_BOARD_SIZE{
 
 typedef struct T_BOMB_STATS{
 	int totalBombs;
+	int numberRevealedTiles;
 	int numberFlags;
 	Grid<bool> map;
 } BOMB_STATS;
@@ -47,6 +48,7 @@ public:
 
 public slots:
 	void reset(int);
+	void revealAll(void);
 	void revealAllExcept(Coordinates);
 
 signals:
