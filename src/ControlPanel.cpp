@@ -31,8 +31,9 @@ ControlPanel::ControlPanel(QWidget* parent)
     this->elapsedTimeDisplay_ = new QLCDNumber(3, this);
     this->elapsedTimeDisplay_->setFixedSize(this->elapsedTimeDisplay_->sizeHint());
     this->timer_ = new QTimer(this);
+    this->timer_->setInterval(1000);
     this->connect(this->timer_, &QTimer::timeout, [this](void){
-        this->elapsedTimeDisplay_->display(this->secondsElapsed_++);
+        this->elapsedTimeDisplay_->display(++this->secondsElapsed_);
     });
 
     // Create the top row widget consisting of the counters and smiley face button
@@ -59,7 +60,7 @@ void ControlPanel::reset(int numberBombs){
 }
 
 void ControlPanel::startTimer(void){
-    this->timer_->start(1000);
+    this->timer_->start();
 }
 
 void ControlPanel::gameOver(bool victory){
