@@ -20,6 +20,7 @@
 // Project-specific includes
 #include "ControlPanel.hpp"
 #include "GameBoard.hpp"
+#include "Settings.hpp"
 
 //----------------------------------------------------------------------------------------------------
 // Class definition
@@ -35,6 +36,7 @@ public slots:
 private:
 	ControlPanel* controlPanel_;
 	GameBoard* gameBoard_;
+	std::unique_ptr<Settings> settings_;
 
 	static const int numberRows_;
 	static const int numberColumns_;

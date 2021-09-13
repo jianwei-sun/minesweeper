@@ -36,7 +36,13 @@ GameMainWindow::GameMainWindow(QWidget* parent)
 
     // Connect the settings action signals
     this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::reset);
+    this->connect(adjustDifficultyAction, &QAction::triggered, [this](){
+        this->settings_->show();
+    });
     this->connect(quitAction, &QAction::triggered, qApp, QApplication::quit);
+
+    // Instantiate the settings widget. Use a unique pointer here because the Settings widget does not have a parent to call its destructor
+    this->settings_ = std::make_unique<Settings>();
 
     // Create a central widget for adding the children widgets
     QWidget* centralWidget = new QWidget(this);
