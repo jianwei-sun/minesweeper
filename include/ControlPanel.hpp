@@ -6,8 +6,6 @@
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
-// Standard library includes
-
 // Third party library includes
 #include <QWidget>
 #include <QLCDNumber>
@@ -15,9 +13,6 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QTimer>
-
-
-// Project-specific includes
 
 //----------------------------------------------------------------------------------------------------
 // Class definition

@@ -12,7 +12,9 @@
 GameMainWindow::GameMainWindow(QWidget* parent)
     : QMainWindow(parent),
       controlPanel_(new ControlPanel(this)),
-      gameBoard_(new GameBoard(BOARD_SIZE{GameMainWindow::numberRows_, GameMainWindow::numberColumns_}, this))
+      gameBoard_(nullptr),
+      settings_(std::make_unique<Settings>()), // Use a unique_ptr because Settings does not have a parent to call its destructor
+      difficulty_(this->settings_->getDifficulty())
 {
     // Set window properties
     this->setWindowTitle("Minesweeper");
@@ -34,50 +36,57 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     settingsMenu->addSeparator();
     settingsMenu->addAction(quitAction);
 
-    // Connect the settings action signals
-    this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::reset);
+    // Connect the menu action signals
+    this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::softReset);
     this->connect(adjustDifficultyAction, &QAction::triggered, [this](){
         this->settings_->show();
     });
     this->connect(quitAction, &QAction::triggered, qApp, QApplication::quit);
-
-    // Instantiate the settings widget. Use a unique pointer here because the Settings widget does not have a parent to call its destructor
-    this->settings_ = std::make_unique<Settings>();
 
     // Create a central widget for adding the children widgets
     QWidget* centralWidget = new QWidget(this);
     this->setCentralWidget(centralWidget);
 
     // Add the game board underneath
-    QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
-    mainLayout->addWidget(this->controlPanel_);
-    mainLayout->addWidget(this->gameBoard_);
+    this->centralLayout_ = new QVBoxLayout(centralWidget);
+    this->centralLayout_->addWidget(this->controlPanel_);
 
     // Connect the signals and slots of the children widgets
-    this->connect(this->controlPanel_, &ControlPanel::newGame, this, &GameMainWindow::reset);
-    this->connect(this->gameBoard_, &GameBoard::gameStarted, this->controlPanel_, &ControlPanel::startTimer);
-    this->connect(this->gameBoard_, &GameBoard::numberFlagsChanged, this->controlPanel_, &ControlPanel::updateNumberFlags);
-    this->connect(this->gameBoard_, &GameBoard::gameOver, this->controlPanel_, &ControlPanel::gameOver);
+    this->connect(this->controlPanel_, &ControlPanel::newGame, this, &GameMainWindow::softReset);
+    this->connect(this->settings_.get(), &Settings::softReset, this, &GameMainWindow::softReset);
+    this->connect(this->settings_.get(), &Settings::hardReset, this, &GameMainWindow::hardReset);
 
-    // Fix the size
-    this->setFixedSize(this->sizeHint());    
+    // Set the main layout of the QMainWindow to be fixed
+    this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
-    // Start a new game
-    this->reset();
+    // Instantiate a new game board
+    this->hardReset();   
 }
 
 //----------------------------------------------------------------------------------------------------
 // Public slots
 //----------------------------------------------------------------------------------------------------
-void GameMainWindow::reset(void){
-    int numberBombs = (int)(GameMainWindow::mineDensity_ * GameMainWindow::numberRows_ * GameMainWindow::numberColumns_);
-    this->controlPanel_->reset(numberBombs);
-    this->gameBoard_->reset(numberBombs);
+void GameMainWindow::softReset(void){
+    // A soft reset only resets the bombs' positions or quantity
+    this->controlPanel_->reset(this->difficulty_.mines);
+    this->gameBoard_->reset(this->difficulty_.mines);
 }
 
-//----------------------------------------------------------------------------------------------------
-// Static constants
-//----------------------------------------------------------------------------------------------------
-const int GameMainWindow::numberRows_ = 10;
-const int GameMainWindow::numberColumns_ = 20;
-const double GameMainWindow::mineDensity_ = 0.2;
+void GameMainWindow::hardReset(void){
+    // A hard reset creates a new instance of GameBoard, which allows it to be of a different size
+    if(this->gameBoard_){
+        this->gameBoard_->disconnect();
+        this->centralLayout_->removeWidget(this->gameBoard_);
+        delete this->gameBoard_;
+    }
+
+    // Create and connect a new instance 
+    this->gameBoard_ = new GameBoard(BOARD_SIZE{this->difficulty_.rows, this->difficulty_.cols}, this);
+    this->centralLayout_->addWidget(this->gameBoard_);
+    this->connect(this->gameBoard_, &GameBoard::gameStarted, this->controlPanel_, &ControlPanel::startTimer);
+    this->connect(this->gameBoard_, &GameBoard::numberFlagsChanged, this->controlPanel_, &ControlPanel::updateNumberFlags);
+    this->connect(this->gameBoard_, &GameBoard::gameOver, this->controlPanel_, &ControlPanel::gameOver);
+
+    // Add the mines
+    this->softReset();
+}

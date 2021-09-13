@@ -6,8 +6,6 @@
 #ifndef GAMEMAINWINDOW_H
 #define GAMEMAINWINDOW_H
 
-// Standard library includes
-
 // Third party library includes
 #include <QApplication>
 #include <QMainWindow>
@@ -31,16 +29,16 @@ public:
 	GameMainWindow(QWidget* parent = nullptr);
 
 public slots:
-	void reset(void);
+	void softReset(void);
+	void hardReset(void);
 
 private:
+	QVBoxLayout* centralLayout_;
 	ControlPanel* controlPanel_;
 	GameBoard* gameBoard_;
-	std::unique_ptr<Settings> settings_;
 
-	static const int numberRows_;
-	static const int numberColumns_;
-	static const double mineDensity_;
+	std::unique_ptr<Settings> settings_;
+	const DIFFICULTY& difficulty_;
 };
 
 #endif
