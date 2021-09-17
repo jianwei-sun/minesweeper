@@ -26,9 +26,16 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/Ox")
 endif()
 
-# Sets the install prefix dirctory. Otherwise, pass in to cmake through the -DCMAKE_INSTALL_PREFIX flag on the command line
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH ${CMAKE_SOURCE_DIR} FORCE)
+# Set the output
+if($ENV{MINESWEEPER_DEBUG})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/debug)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/debug)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/debug)
+else()
+    set(RELEASE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/packages/com.vendor.product/data)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${RELEASE_OUTPUT_DIRECTORY})
+    set(INSTALLER_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/release)
+    file(MAKE_DIRECTORY ${INSTALLER_OUTPUT_DIRECTORY})
 endif()
 
 # Suppress generation of ZERO_CHECK targets. A ZERO_CHECK target regenerates the cmake configuration
@@ -79,9 +86,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
 )
 
-# Install the executable
-install(TARGETS ${PROJECT_NAME})
-
 # Package the release for Windows
 if(NOT $ENV{MINESWEEPER_DEBUG} AND WIN32)
     message(STATUS "Creating Windows installer")
@@ -89,7 +93,17 @@ if(NOT $ENV{MINESWEEPER_DEBUG} AND WIN32)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
             env PATH=$ENV{Qt5_DIR} "${WINDEPLOYQT_EXECUTABLE}"
-            ${PROJECT_SOURCE_DIR}/bin/${PROJECT_NAME}.exe
+            ${RELEASE_OUTPUT_DIRECTORY}/${PROJECT_NAME}.exe
         COMMENT "Running windeployqt..."
+    )
+
+    find_program(BINARYCREATOR_EXECUTABLE binarycreator HINTS $ENV{QT_BINARYCREATOR_DIR})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E
+            env PATH=$ENV{QT_BINARYCREATOR_DIR} "${BINARYCREATOR_EXECUTABLE}"
+            -c ${PROJECT_SOURCE_DIR}/config/config.xml
+            -p ${PROJECT_SOURCE_DIR}/packages
+            ${INSTALLER_OUTPUT_DIRECTORY}/${PROJECT_NAME}Installer.exe
+        COMMENT "Running binarycreator..."
     )
 endif()

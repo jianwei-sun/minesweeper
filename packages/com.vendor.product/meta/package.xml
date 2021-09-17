@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Minesweeper</DisplayName>
+    <Description>Install Minesweeper.</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2021-09-17</ReleaseDate>
+    <Licenses>
+        <License name="The MIT License (MIT)" file="license.txt" />
+    </Licenses>
+    <Default>true</Default>
+</Package>
