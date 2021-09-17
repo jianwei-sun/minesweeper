@@ -13,6 +13,7 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     : QMainWindow(parent),
       controlPanel_(new ControlPanel(this)),
       gameBoard_(nullptr),
+      about_(std::make_unique<About>()),
       settings_(std::make_unique<Settings>()), // Use a unique_ptr because Settings does not have a parent to call its destructor
       difficulty_(this->settings_->getDifficulty())
 {
@@ -24,6 +25,7 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     QAction* newGameAction = new QAction("&New Game", this);
     newGameAction->setShortcut(tr("CTRL+N"));
 
+    QAction* aboutAction = new QAction("About", this);
     QAction* adjustDifficultyAction = new QAction("Settings", this);
 
     QAction* quitAction = new QAction("&Quit", this);
@@ -32,12 +34,16 @@ GameMainWindow::GameMainWindow(QWidget* parent)
     QMenu* settingsMenu = this->menuBar()->addMenu("Game");
     settingsMenu->addAction(newGameAction);
     settingsMenu->addSeparator();
+    settingsMenu->addAction(aboutAction);
     settingsMenu->addAction(adjustDifficultyAction);
     settingsMenu->addSeparator();
     settingsMenu->addAction(quitAction);
 
     // Connect the menu action signals
     this->connect(newGameAction, &QAction::triggered, this, &GameMainWindow::softReset);
+    this->connect(aboutAction, &QAction::triggered, [this](){
+        this->about_->show();
+    });
     this->connect(adjustDifficultyAction, &QAction::triggered, [this](){
         this->settings_->show();
     });

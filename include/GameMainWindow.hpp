@@ -18,6 +18,7 @@
 // Project-specific includes
 #include "ControlPanel.hpp"
 #include "GameBoard.hpp"
+#include "About.hpp"
 #include "Settings.hpp"
 
 //----------------------------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ private:
 	ControlPanel* controlPanel_;
 	GameBoard* gameBoard_;
 
+	std::unique_ptr<About> about_;
 	std::unique_ptr<Settings> settings_;
 	const DIFFICULTY& difficulty_;
 };
