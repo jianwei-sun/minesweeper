@@ -5,5 +5,5 @@
     <Title>Minesweeper Installer</Title>
     <Publisher>Jianwei Sun</Publisher>
     <StartMenuDir>Minesweeper</StartMenuDir>
-    <TargetDir>@ApplicationsDirX86@/Minesweeper</TargetDir>
+    <TargetDir>@HomeDir@/Minesweeper</TargetDir>
 </Installer>
