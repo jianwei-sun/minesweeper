@@ -23,7 +23,7 @@ About::About(QWidget* parent)
     title->setAlignment(Qt::AlignCenter);
 
     QLabel* creditsLabel = new QLabel(
-        "<br>Created by <a href=\"https://jianwei-sun.github.io/\">Jianwei Sun</a>.<br>Built with C++ and Qt. All icons from Flaticon.<br><br>"
+        "<br>Created by <a href=\"https://jianwei-sun.github.io/\">Jianwei Sun</a>.<br><a href=\"https://github.com/jianwei-sun/minesweeper\">Source code</a> hosted on Github.<br>Built with C++ and Qt. All icons from Flaticon.<br><br>"
     , this);
     creditsLabel->setTextFormat(Qt::RichText);
     creditsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
