@@ -81,3 +81,15 @@ target_link_libraries(${PROJECT_NAME}
 
 # Install the executable
 install(TARGETS ${PROJECT_NAME})
+
+# Package the release for Windows
+if(NOT $ENV{MINESWEEPER_DEBUG} AND WIN32)
+    message(STATUS "Creating Windows installer")
+    find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS $ENV{Qt5_DIR})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E
+            env PATH=$ENV{Qt5_DIR} "${WINDEPLOYQT_EXECUTABLE}"
+            ${PROJECT_SOURCE_DIR}/bin/${PROJECT_NAME}.exe
+        COMMENT "Running windeployqt..."
+    )
+endif()
