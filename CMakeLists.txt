@@ -5,7 +5,7 @@
 # Desc: CMake configuration file for the Minesweeper game
 #----------------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.15.2)
-project(minesweeper)
+project(Minesweeper)
 
 # Configure to build for the C++17 standard
 set(CMAKE_CXX_STANDARD 17)
@@ -68,14 +68,21 @@ file(GLOB_RECURSE PROJECT_SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/resources/resources.qrc
 )
 
+# Set the icon for Windows
+if(WIN32)
+    set(APP_ICON_RESOURCE_WINDOWS "${PROJECT_SOURCE_DIR}/resources/resources.rc")
+endif()
+
 # Add the executable
 if($ENV{MINESWEEPER_DEBUG})
     add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCE_FILES}
+        ${APP_ICON_RESOURCE_WINDOWS}
     )
 else()
     add_executable(${PROJECT_NAME} WIN32
         ${PROJECT_SOURCE_FILES}
+        ${APP_ICON_RESOURCE_WINDOWS}
     )
 endif()
 
@@ -101,6 +108,7 @@ if(NOT $ENV{MINESWEEPER_DEBUG} AND WIN32)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
             env PATH=$ENV{QT_BINARYCREATOR_DIR} "${BINARYCREATOR_EXECUTABLE}"
+            --offline-only
             -c ${PROJECT_SOURCE_DIR}/config/config.xml
             -p ${PROJECT_SOURCE_DIR}/packages
             ${INSTALLER_OUTPUT_DIRECTORY}/${PROJECT_NAME}Installer.exe
