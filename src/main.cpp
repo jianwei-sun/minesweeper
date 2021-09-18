@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------------------------------
 // Third party library includes
 #include <QApplication>
+#include <Windows.h>
 
 // Project-specific includes
 #include "GameMainWindow.hpp"
@@ -17,6 +18,10 @@
 // Main program structure
 //----------------------------------------------------------------------------------------------------
 int main(int argc, char *argv[]){
+    // Set scaling for high-DPI monitors
+    SetProcessDPIAware();
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     // Setup the GUI
     std::unique_ptr<QApplication> app = std::make_unique<QApplication>(argc, argv);
     std::unique_ptr<GameMainWindow> gameMainWindow = std::make_unique<GameMainWindow>();
